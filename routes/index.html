@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>express API</title>
+    </head>
+
+<body>
+	<div>
+        <div>
+            <h2>Данные о продуктах</h2>
+        </div>
+<input type="text" name="q" value="" id="user-products" placeholder="Продукты">
+ <div>
+            <button class="btn btn_search">Поиск</button>
+        </div>
+<div id="myForm">
+            <form action="#">
+                <div >
+                    <h2>Добавить новый продукт</h2>
+                </div>
+                <label for="name"><b>Название</b></label>
+                <input type="text" placeholder="Название продукта" id="name" required>
+                <label for="cost"><b>Стоимость</b></label>
+                <input type="text" placeholder="Cтоимость" id="cost" required>
+                <label for="quantity"><b>Остаток на складе</b></label>
+                <input type="text" placeholder="Остаток" id="quantity" required>
+                <button type="submit" onclick="AddProducts()">Отправить</button>
+            </form>
+        </div>
+      <ul class="film-list"></ul>
+           </div>
+           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
+
+     <script>
+        const url = 'http://localhost:3001';
+
+         const drawProducts = (users) => {
+            console.log(users.name + '123');
+            console.log(users.length);
+            var html = '';
+            for (let index = 0; index < users.length; index++) {
+                html +=
+                    '<li>' +
+                    '<h4>' + users[index].name + ' ' + '</h4>' +
+                    '<p>' + users[index].cost + '</p>' +
+                    '<p>' + users[index].quantity + '</p>' +
+                    '<ul>' +
+                    '<p>' +
+                    '<button class="btn1 btn_dell" onclick="dellProducts(' + users[index].id + ')">' + "Удалить" +
+                    '</button>' +
+                    '</p>' +
+                    '<p>' +
+                    '<button class="btn1 btn_dell" onclick="putProducts(' + users[index].id + ')">' + "Редактировать" +
+                    '</button>' +
+                    '</p>' +
+                    '</ul>'
+                '</div>'
+                '</a>' +
+                '</li>';
+            }
+            $('ul').html(html);
+        }
+		function putProducts(id) {
+            fetch(url + '/usersId' + '?id=' + id, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then(users => {
+                console.log('123456');
+                console.log(users.name + '1!!!2');
+
+                var html = '';
+                html +=
+                    '<div id="myForm1">' +
+                    '<form action="#">' +
+                    '<div>' +
+                    '<h2>Изменить продукт</h2>' +
+                    '</div>' +
+                    '<label for="name"><b>Название: ' + users.name + '</b></label>' +
+                    '<input type="text" placeholder="Название продукта" id="name1" required>' +
+                    '<label for="cost"><b>Стоимость: ' + users.cost + '</b></label>' +
+                    '<input type="text" placeholder="Стоимость продуктов" id="cost1" required>' +
+                    '<label for="quantity"><b>Остаток на складе: ' + users.quantity + '</b></label>' +
+                    '<input type="text" placeholder="Остаток" id="quantity1" required>' +
+                    '<button type="submit" onclick="Put1Products(' + users.id + ')">Отправить</button>'
+                '</form>' +
+                '</div>';
+                $('ul').html(html);
+                document.getElementById("myForm1").style.display = "block";
+            });
+
+        }
+        function Put1Products(id) {
+            let name = document.getElementById("name1").value;
+            console.log(name);
+            let cost = document.getElementById("cost1").value;
+            let quantity = document.getElementById("quantity1").value;
+            let user = {
+                id: id,
+                name: name,
+                cost: cost,
+                quantity: quantity
+            }
+            console.log(user.name + 'ghjdthrf');
+            console.warn(JSON.stringify(user));
+            fetch(url + "/users", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            }).then(res => res.json()).then(users => {
+                drawProducts(users);
+            });
+        }
+function dellProducts(id) {
+            fetch(url + '/users' + '?id=' + id, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then(users => {
+                drawProducts(users);
+            });
+        }
+        function findProducts() {
+            let count = document.getElementById("user-products").value;
+
+            fetch(url + '/users' + '?user_name=' + count, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(res => res.json()).then(users => {
+
+                drawProducts(users);
+            });
+        }
+function AddProducts() {
+            let name = document.getElementById("name").value;
+            let cost = document.getElementById("cost").value;
+            let quantity = document.getElementById("quantity").value;
+                        let user = {
+                id: 0,
+                name: name,
+                cost: cost,
+                quantity: quantity
+            }
+            console.warn(user)
+            console.warn(JSON.stringify(user))
+
+            fetch(url + "/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            }).then(res => res.json()).then(users => {
+                drawProducts(users);
+            });
+
+        }
+         const btn = document.querySelector(".btn_search");
+
+        btn.addEventListener("click", findProducts);
+    </script>
+
+    <script scc="/routes/routes"></script>
+</body>
+
+</html>
